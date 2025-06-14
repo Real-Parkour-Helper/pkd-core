@@ -15,17 +15,18 @@ class WorldGenerator(private val world: World, private val roomList: List<String
      * This assumes the world has been unloaded by bukkit
      * and can be written over.
      *
-     * Returns a list of all checkpoint locations (including the start location and end plate).
+     * Returns a nested list of all checkpoint locations (including the start location and end plate).
+     * Each sub-list contains the checkpoint locations for a single room.
      */
-    fun generateWorld(): List<Location> {
+    fun generateWorld(): List<List<Location>> {
         val baseY = 65
         var currentZ = 0
         var currentCheckpoint = 1
-        val checkpointLocations = mutableListOf<Location>()
+        val checkpointLocations = mutableListOf<List<Location>>()
 
         for (room in roomList) {
             val (meta, data) = RoomLoader.loadRoom(room)
-            checkpointLocations.addAll(pasteRoom(0, baseY, currentZ, currentCheckpoint, meta, data))
+            checkpointLocations.add(pasteRoom(0, baseY, currentZ, currentCheckpoint, meta, data))
 
             currentZ += meta.depth
             currentCheckpoint += meta.checkpoints.size
@@ -38,7 +39,7 @@ class WorldGenerator(private val world: World, private val roomList: List<String
         world.setGameRuleValue("doWeatherCycle", "false")
         world.setGameRuleValue("randomTickSpeed", "0")
 
-        val finalList = mutableListOf(Location(world, 18.0, 75.0, 4.0))
+        val finalList = mutableListOf(listOf(Location(world, 18.0, 75.0, 4.0)))
         finalList.addAll(checkpointLocations)
         return finalList
     }
