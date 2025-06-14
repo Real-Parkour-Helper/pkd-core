@@ -9,6 +9,7 @@ class CheckpointTracker(
     private val onCheckpoint: (Player, Int) -> Unit
 ) {
 
+    private var tickCounter = 0
     private val checkpointMap: MutableMap<Player, Int> = mutableMapOf()
 
     init {
@@ -18,9 +19,11 @@ class CheckpointTracker(
     }
 
     /**
-     * Run the tick - check for checkpoint updates. This should be run every two ticks!
+     * Run the tick which check for checkpoint updates
      */
     fun tick() {
+        if (++tickCounter % 2 != 0) return
+
         for (player in players) {
             val location = player.location
             val currentCheckpoint = checkpointMap[player] ?: throw IllegalStateException("Player not found in checkpoint map")
