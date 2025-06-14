@@ -90,14 +90,6 @@ class WorldGenerator(private val world: World, private val roomList: List<String
 
             if (meta.name != "finish_room") {
                 val loc2 = Location(world, x + checkpoint.x + 0.5, y + checkpoint.y + 0.2, z + checkpoint.z + 0.5)
-                checkpointLocations.add(
-                    Location(
-                        world,
-                        (x + checkpoint.x).toDouble(),
-                        (y + checkpoint.y).toDouble(),
-                        (z + checkpoint.z).toDouble()
-                    )
-                )
 
                 val stand1 = world.spawn(loc1, ArmorStand::class.java).apply {
                     isVisible = false
