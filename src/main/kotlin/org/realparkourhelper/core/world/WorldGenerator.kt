@@ -14,15 +14,18 @@ class WorldGenerator(private val world: World, private val roomList: List<String
      * Generates the world with the provided rooms.
      * This assumes the world has been unloaded by bukkit
      * and can be written over.
+     *
+     * Returns a list of all checkpoint locations (including the start location and end plate).
      */
-    fun generateWorld() {
+    fun generateWorld(): List<Location> {
         val baseY = 65
         var currentZ = 0
         var currentCheckpoint = 1
+        val checkpointLocations = mutableListOf<Location>()
 
         for (room in roomList) {
             val (meta, data) = RoomLoader.loadRoom(room)
-            pasteRoom(0, baseY, currentZ, currentCheckpoint, meta, data)
+            checkpointLocations.addAll(pasteRoom(0, baseY, currentZ, currentCheckpoint, meta, data))
 
             currentZ += meta.depth
             currentCheckpoint += meta.checkpoints.size
@@ -34,13 +37,24 @@ class WorldGenerator(private val world: World, private val roomList: List<String
         world.setGameRuleValue("doDaylightCycle", "false")
         world.setGameRuleValue("doWeatherCycle", "false")
         world.setGameRuleValue("randomTickSpeed", "0")
+
+        val finalList = mutableListOf(Location(world, 18.0, 75.0, 4.0))
+        finalList.addAll(checkpointLocations)
+        return finalList
     }
 
     /**
      * Pastes a room at the given coordinates.
      * Also creates the armor stands for checkpoint labels.
      */
-    private fun pasteRoom(x: Int, y: Int, z: Int, currentCheckpoint: Int, meta: RoomMeta, data: BlockStructure) {
+    private fun pasteRoom(
+        x: Int,
+        y: Int,
+        z: Int,
+        currentCheckpoint: Int,
+        meta: RoomMeta,
+        data: BlockStructure
+    ): List<Location> {
         val idToName = data.palette.entries.associateBy({ it.value }, { it.key })
 
         for (block in data.blocks) {
@@ -57,11 +71,29 @@ class WorldGenerator(private val world: World, private val roomList: List<String
         }
 
         val checkpoints = meta.checkpoints
+        val checkpointLocations = mutableListOf<Location>()
         for ((idx, checkpoint) in checkpoints.withIndex()) {
             val loc1 = Location(world, x + checkpoint.x + 0.5, y + checkpoint.y + 0.5, z + checkpoint.z + 0.5)
 
+            checkpointLocations.add(
+                Location(
+                    world,
+                    (x + checkpoint.x).toDouble(),
+                    (y + checkpoint.y).toDouble(),
+                    (z + checkpoint.z).toDouble()
+                )
+            )
+
             if (meta.name != "finish_room") {
                 val loc2 = Location(world, x + checkpoint.x + 0.5, y + checkpoint.y + 0.2, z + checkpoint.z + 0.5)
+                checkpointLocations.add(
+                    Location(
+                        world,
+                        (x + checkpoint.x).toDouble(),
+                        (y + checkpoint.y).toDouble(),
+                        (z + checkpoint.z).toDouble()
+                    )
+                )
 
                 val stand1 = world.spawn(loc1, ArmorStand::class.java).apply {
                     isVisible = false
@@ -88,6 +120,8 @@ class WorldGenerator(private val world: World, private val roomList: List<String
                 }
             }
         }
+
+        return checkpointLocations
     }
 
     /**
