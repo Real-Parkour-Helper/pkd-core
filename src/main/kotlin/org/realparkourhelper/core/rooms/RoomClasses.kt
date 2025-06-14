@@ -1,4 +1,4 @@
-package rooms
+package org.realparkourhelper.core.rooms
 
 data class Checkpoint(
     val x: Int,

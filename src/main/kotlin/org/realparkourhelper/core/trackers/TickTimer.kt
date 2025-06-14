@@ -1,4 +1,4 @@
-package trackers
+package org.realparkourhelper.core.trackers
 
 class TickTimer {
 

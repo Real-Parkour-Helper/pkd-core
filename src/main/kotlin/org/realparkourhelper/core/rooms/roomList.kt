@@ -1,4 +1,4 @@
-package rooms
+package org.realparkourhelper.core.rooms
 
 val roomList = listOf(
     "around_pillars", "blocks",

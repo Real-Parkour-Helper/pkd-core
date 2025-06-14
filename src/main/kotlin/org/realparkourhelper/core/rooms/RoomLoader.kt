@@ -1,4 +1,4 @@
-package rooms
+package org.realparkourhelper.core.rooms
 
 import com.google.gson.Gson
 import java.io.InputStreamReader

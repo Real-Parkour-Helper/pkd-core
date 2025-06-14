@@ -1,4 +1,4 @@
-package utils
+package org.realparkourhelper.core.utils
 
 import org.bukkit.Sound
 import org.bukkit.entity.Player

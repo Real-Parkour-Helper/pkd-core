@@ -1,12 +1,12 @@
-package world
+package org.realparkourhelper.core.world
 
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.entity.ArmorStand
-import rooms.BlockStructure
-import rooms.RoomLoader
-import rooms.RoomMeta
+import org.realparkourhelper.core.rooms.BlockStructure
+import org.realparkourhelper.core.rooms.RoomLoader
+import org.realparkourhelper.core.rooms.RoomMeta
 
 class WorldGenerator(private val world: World, private val roomList: List<String>) {
 

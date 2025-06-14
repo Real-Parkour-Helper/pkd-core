@@ -1,4 +1,4 @@
-package world
+package org.realparkourhelper.core.world
 
 val blockIDs = mapOf(
     "minecraft:air" to 0,

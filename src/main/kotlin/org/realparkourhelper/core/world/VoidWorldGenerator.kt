@@ -1,4 +1,4 @@
-package world
+package org.realparkourhelper.core.world
 
 import org.bukkit.World
 import org.bukkit.generator.ChunkGenerator

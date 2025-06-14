@@ -1,4 +1,4 @@
-package trackers
+package org.realparkourhelper.core.trackers
 
 import org.bukkit.Location
 import org.bukkit.entity.Player
