@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "org.realparkourhelper"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -11,6 +11,9 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+
+    compileOnly("org.github.paperspigot:paperspigot-api:1.8.8-R0.1-20160806.221350-1")
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.2.1")
 }
 
 tasks.test {
