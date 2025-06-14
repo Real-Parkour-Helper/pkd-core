@@ -26,7 +26,10 @@ class WorldGenerator(private val world: World, private val roomList: List<String
 
         for (room in roomList) {
             val (meta, data) = RoomLoader.loadRoom(room)
-            checkpointLocations.add(pasteRoom(0, baseY, currentZ, currentCheckpoint, meta, data))
+            val cpls = pasteRoom(0, baseY, currentZ, currentCheckpoint, meta, data)
+            if (cpls.isNotEmpty()) {
+                checkpointLocations.add(cpls)
+            }
 
             currentZ += meta.depth
             currentCheckpoint += meta.checkpoints.size
