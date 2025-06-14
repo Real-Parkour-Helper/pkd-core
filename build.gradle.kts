@@ -8,6 +8,8 @@ version = "1.0"
 repositories {
     mavenCentral()
 
+    maven("https://repo.dmulloy2.net/repository/public/")
+
     maven {
         name = "papermc"
         url = uri("https://repo.papermc.io/repository/maven-public/")
