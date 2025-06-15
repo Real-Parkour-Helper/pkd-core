@@ -26,6 +26,12 @@ class ItemBuilder(private val material: Material) {
         return this
     }
 
+    /** Set the durability */
+    fun durability(durability: Short): ItemBuilder {
+        item.durability = durability
+        return this
+    }
+
     /** Finalize and return your ItemStack */
     fun build(): ItemStack {
         item.itemMeta = meta
