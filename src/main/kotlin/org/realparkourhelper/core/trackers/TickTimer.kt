@@ -23,6 +23,7 @@ class TickTimer {
      * Increments the tick counter by one.
      */
     fun tick() {
+        if (!running) return
         elapsedTicks++
     }
 
