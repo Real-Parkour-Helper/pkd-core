@@ -13,6 +13,9 @@ object HotbarManager {
     private val layouts = mutableMapOf<UUID, HotbarLayout>()
     private val heldSlots = mutableMapOf<UUID, Int>()
 
+    private val lastClickTime = mutableMapOf<UUID, Long>()
+    private const val CLICK_COOLDOWN_MS = 50L
+
     fun setLayout(player: Player, layout: HotbarLayout) {
         layouts[player.uniqueId] = layout
     }
@@ -22,8 +25,18 @@ object HotbarManager {
     }
 
     fun handleClick(player: Player) {
-        val slot = heldSlots[player.uniqueId] ?: player.inventory.heldItemSlot
-        layouts[player.uniqueId]?.handleClick(player, slot)
+        val now = System.currentTimeMillis()
+        val uuid = player.uniqueId
+
+        val last = lastClickTime[uuid]
+        if (last != null && now - last < CLICK_COOLDOWN_MS) {
+            return // debounce clicks
+        }
+
+        lastClickTime[uuid] = now
+
+        val slot = heldSlots[uuid] ?: player.inventory.heldItemSlot
+        layouts[uuid]?.handleClick(player, slot)
     }
 
     fun clear(player: Player) {
