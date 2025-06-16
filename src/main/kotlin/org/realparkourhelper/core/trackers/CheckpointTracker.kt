@@ -4,12 +4,13 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 
 class CheckpointTracker(
-    private val checkpointLocations: List<Location>,
+    checkpointLocations: List<Location>,
     private val players: List<Player>,
     private val onCheckpoint: (Player, Int) -> Unit
 ) {
 
     private var tickCounter = 0
+    private val checkpointLocations = checkpointLocations.toMutableList()
     private val checkpointMap: MutableMap<Player, Int> = mutableMapOf()
 
     init {
@@ -43,6 +44,15 @@ class CheckpointTracker(
         val currentCheckpoint = checkpointMap[player] ?: throw IllegalStateException("Player not found in checkpoint map")
         val location = checkpointLocations[currentCheckpoint].clone().add(0.5, 0.5, 0.5)
         player.teleport(location)
+    }
+
+    fun getCheckpoint(index: Int): Location? {
+        return checkpointLocations.getOrNull(index)
+    }
+
+    fun setCheckpoint(index: Int, location: Location) {
+        if (index < 0 || index >= checkpointLocations.size) return
+        checkpointLocations[index] = location
     }
 
     fun getCheckpoint(p: Player): Int? = checkpointMap[p]
