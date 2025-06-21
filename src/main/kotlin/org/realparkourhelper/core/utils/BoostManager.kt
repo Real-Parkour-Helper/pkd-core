@@ -77,6 +77,7 @@ class BoostManager(
     private fun startCooldownVisuals(duration: Long, onCooldownEnd: () -> Unit) {
         if (taskId != -1) {
             Bukkit.getScheduler().cancelTask(taskId)
+            taskId = -1
         }
 
         val totalTicks = duration / 50
@@ -95,6 +96,7 @@ class BoostManager(
             if (ticksLeft-- <= 0) {
                 hasEnded = true
                 Bukkit.getScheduler().cancelTask(taskId)
+                taskId = -1
                 player.level = 0
                 player.exp = 0f
                 onCooldownEnd()
