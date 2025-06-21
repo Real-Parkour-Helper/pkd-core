@@ -6,6 +6,7 @@ import com.comphenix.protocol.events.PacketContainer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.*
 import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.sin
@@ -16,18 +17,26 @@ import kotlin.math.sqrt
  * The boost provider should return the cooldown time in seconds.
  */
 class BoostManager(
-    private val player: Player,
+    private val uuid: UUID,
     private val plugin: JavaPlugin,
     private val cooldownProvider: () -> Int
 ) {
+    private var player: Player? = null
     private var lastBoostTime: Long = 0L
     private var taskId: Int = -1
+
+    fun attach(player: Player) {
+        if (player.uniqueId != uuid) return
+        this.player = player
+    }
 
     fun tryBoost(
         onSuccess: () -> Unit,
         onCooldownEnd: () -> Unit,
         onFail: (secondsLeft: Int) -> Unit
     ) {
+        val player = this.player ?: return
+
         val now = System.currentTimeMillis()
         val cooldown = cooldownProvider() * 1000L
         val remaining = (lastBoostTime + cooldown) - now
@@ -37,13 +46,13 @@ class BoostManager(
             return
         }
 
-        applyBoost()
+        applyBoost(player)
         onSuccess()
         lastBoostTime = now
-        startCooldownVisuals(cooldown, onCooldownEnd)
+        startCooldownVisuals(player, cooldown, onCooldownEnd)
     }
 
-    private fun applyBoost() {
+    private fun applyBoost(player: Player) {
         val magnitude = 12000
         val yaw = player.location.yaw
         val pitch = player.location.pitch
@@ -55,7 +64,7 @@ class BoostManager(
         var y = -sin(pitchRad)
         var z = cos(pitchRad) * cos(yawRad)
 
-        val length = sqrt(x*x + y*y + z*z)
+        val length = sqrt(x * x + y * y + z * z)
         x /= length
         y /= length
         z /= length
@@ -74,7 +83,7 @@ class BoostManager(
         }
     }
 
-    private fun startCooldownVisuals(duration: Long, onCooldownEnd: () -> Unit) {
+    private fun startCooldownVisuals(player: Player, duration: Long, onCooldownEnd: () -> Unit) {
         if (taskId != -1) {
             Bukkit.getScheduler().cancelTask(taskId)
             taskId = -1
@@ -86,6 +95,7 @@ class BoostManager(
 
         taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
             if (hasEnded) return@scheduleSyncRepeatingTask
+            if (!player.isOnline) return@scheduleSyncRepeatingTask
 
             val secondsLeft = (ticksLeft / 20).toInt()
             val progress = ticksLeft.toFloat() / totalTicks
