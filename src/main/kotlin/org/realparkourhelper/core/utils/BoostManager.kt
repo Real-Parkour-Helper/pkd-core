@@ -75,10 +75,17 @@ class BoostManager(
     }
 
     private fun startCooldownVisuals(duration: Long, onCooldownEnd: () -> Unit) {
+        if (taskId != -1) {
+            Bukkit.getScheduler().cancelTask(taskId)
+        }
+
         val totalTicks = duration / 50
         var ticksLeft = totalTicks
+        var hasEnded = false
 
         taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
+            if (hasEnded) return@scheduleSyncRepeatingTask
+
             val secondsLeft = (ticksLeft / 20).toInt()
             val progress = ticksLeft.toFloat() / totalTicks
 
@@ -86,6 +93,7 @@ class BoostManager(
             player.exp = progress
 
             if (ticksLeft-- <= 0) {
+                hasEnded = true
                 Bukkit.getScheduler().cancelTask(taskId)
                 player.level = 0
                 player.exp = 0f
